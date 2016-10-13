@@ -1,5 +1,5 @@
 {
-    "name": "MyCademy/mailgun-magento2",
+    "name": "Bogardo/mailgun-magento2",
     "description": "Send Magento's transactional emails with the Mailgun API",
     "type": "magento2-module",
     "version": "0.1.4",
