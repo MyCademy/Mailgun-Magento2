@@ -31,7 +31,7 @@ You can access the mail logs in your [Mailgun control panel](https://mailgun.com
 ## Changelog
 
 #### 0.1.5
-- Downgraded mailgun/mailgun-php to version 2.3.* due to a bug in 2.4.*. See [issue](https://github.com/mailgun/mailgun-php/issues/452)
+- Downgraded mailgun/mailgun-php to version 2.4.0 due to a bug in 2.4.1. See [issue](https://github.com/mailgun/mailgun-php/issues/452)
 
 #### 0.1.4
 Fix version number
