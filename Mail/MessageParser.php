@@ -3,12 +3,14 @@
 namespace Bogardo\Mailgun\Mail;
 
 use Magento\Framework\Mail\MessageInterface;
+use Zend\Mail\Address;
+use Zend\Mail\AddressList;
 
 class MessageParser
 {
 
     /**
-     * @var \Magento\Framework\Message\MessageInterface|\Magento\Framework\Mail\Message
+     * @var \Magento\Framework\Message\MessageInterface|\Bogardo\Mailgun\Mail\Message
      */
     protected $message;
 
@@ -27,72 +29,57 @@ class MessageParser
     {
         $eol = "\n";
 
+
         $html = "";
         $text = "";
 
-        $htmlPart = $this->message->getBodyHtml();
-        if ($htmlPart) {
-            $html = $htmlPart->getContent($eol);
+        $htmlPart = $this->message->getZendMessage()->getBody();
+        if ($htmlPart && $htmlPart instanceof \Zend\Mime\Message) {
+            $html = $htmlPart->getPartContent($eol);
         }
-        $textPart = $this->message->getBodyText();
-        if ($textPart) {
-            $text = $textPart->getContent($eol);
-        }
+
+        $text = $this->message->getZendMessage()->getBodyText();
 
         $text = quoted_printable_decode($text);
         $html = quoted_printable_decode($html);
 
-        $attachments = [];
+        $fromAddress = $this->getFlatAddressList($this->message->getZendMessage()->getFrom())[0];
+        $toAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getTo());
+        $ccAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getCc());
+        $bccAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getBcc());
+        $replyToAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getReplyTo());
 
-        foreach ($this->message->getParts() as $part) { /** @var \Zend_Mime_Part $part */
-            if ($part->disposition == 'attachment') {
-                $attachments[] = $part;
+        $attachments = [];
+        if($this->message->getZendMessage()->getBody() instanceof \Zend\Mime\Message) {
+            foreach ($this->message->getZendMessage()->getBody()->getParts() as $part) { /** @var \Zend_Mime_Part $part */
+                if ($part->disposition == 'attachment') {
+                    $attachments[] = $part;
+                }
             }
         }
 
         return [
-            'from' => $this->message->getFrom(),
-            'reply-to' => $this->message->getReplyTo(),
-            'subject' => $this->message->getSubject(),
-            'to' => $this->parseRecipients('To'),
-            'cc' => $this->parseRecipients('Cc'),
-            'bcc' => $this->parseRecipients('Bcc'),
+            'from' => $fromAddress,
+            'reply-to' => $replyToAddressList,
+            'subject' => $this->message->getZendMessage()->getSubject(),
+            'to' => $toAddressList,
+            'cc' => $ccAddressList,
+            'bcc' => $bccAddressList,
             'html' => $html ?: null,
             'text' => $text ?: null,
             'attachments' => $attachments,
         ];
     }
 
-    /**
-     * @param string $type
-     *
-     * @return array
-     */
-    protected function parseRecipients($type)
+    protected function getFlatAddressList(AddressList $zendAddressList)
     {
-        $all = $this->message->getRecipients();
+        $addressList = [];
 
-        $headers = $this->message->getHeaders();
-
-        $recipients = isset($headers[$type]) ? $headers[$type] : [];
-
-        $result = [];
-        foreach ($recipients as $key => $recipient) {
-            if ($key === 'append') {
-                continue;
-            }
-
-            if (preg_match('/<(.*)>/', $recipient, $matches)) {
-                $recipientAddress = $matches[1];
-            } else {
-                $recipientAddress = $recipient;
-            }
-
-            if (in_array($recipientAddress, $all)) {
-                $result[] = trim($recipient);
-            }
+        foreach($zendAddressList as $address) {
+            /** @var $address Address */
+            $addressList[] = $address->getEmail();
         }
 
-        return $result;
+        return $addressList;
     }
 }
