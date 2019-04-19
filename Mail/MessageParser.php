@@ -3,6 +3,7 @@
 namespace Bogardo\Mailgun\Mail;
 
 use Magento\Framework\Mail\MessageInterface;
+use Magento\Store\Model\ScopeInterface;
 use Zend\Mail\Address;
 use Zend\Mail\AddressList;
 
@@ -17,8 +18,9 @@ class MessageParser
     /**
      * @param \Magento\Framework\Mail\MessageInterface $message
      */
-    public function __construct(MessageInterface $message)
-    {
+    public function __construct(
+        MessageInterface $message
+    ){
         $this->message = $message;
     }
 
@@ -43,7 +45,13 @@ class MessageParser
         $text = quoted_printable_decode($text);
         $html = quoted_printable_decode($html);
 
-        $fromAddress = $this->getFlatAddressList($this->message->getZendMessage()->getFrom())[0];
+        if(empty($this->getFlatAddressList($this->message->getZendMessage()->getFrom()))) {
+            $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
+            $fromAddress = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('trans_email/ident_support/email',ScopeInterface::SCOPE_STORE);
+        }else{
+            $fromAddress = $this->getFlatAddressList($this->message->getZendMessage()->getFrom())[0];
+        }
+
         $toAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getTo());
         $ccAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getCc());
         $bccAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getBcc());
