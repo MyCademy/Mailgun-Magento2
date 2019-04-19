@@ -35,7 +35,7 @@ class MessageParser
 
         $htmlPart = $this->message->getZendMessage()->getBody();
         if ($htmlPart && $htmlPart instanceof \Zend\Mime\Message) {
-            $html = $htmlPart->getPartContent($eol);
+            $html = $htmlPart->generateMessage($eol);
         }
 
         $text = $this->message->getZendMessage()->getBodyText();
