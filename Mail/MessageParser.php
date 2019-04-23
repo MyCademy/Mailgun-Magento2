@@ -51,7 +51,7 @@ class MessageParser
 
         if(empty($this->getFlatAddressList($this->message->getZendMessage()->getFrom()))) {
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
-            $fromAddress = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('trans_email/ident_support/email',ScopeInterface::SCOPE_STORE);
+            $fromAddress = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('trans_email/ident_general/email',ScopeInterface::SCOPE_STORE);
         }else{
             $fromAddress = $this->getFlatAddressList($this->message->getZendMessage()->getFrom())[0];
         }
