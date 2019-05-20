@@ -2,4 +2,16 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
     <preference for="\Magento\Framework\Mail\TransportInterface" type="Bogardo\Mailgun\Mail\Transport" />
     <preference for="\Magento\Framework\Mail\Message" type="Bogardo\Mailgun\Mail\Message" />
+
+    <type name="Magento\Config\Model\Config\TypePool">
+        <arguments>
+            <argument name="sensitive" xsi:type="array">
+                <item name="bogardo_mailgun/api/domain" xsi:type="string">1</item>
+                <item name="bogardo_mailgun/api/private_key" xsi:type="string">1</item>
+                <item name="bogardo_mailgun/api/public_key" xsi:type="string">1</item>
+                <item name="bogardo_mailgun/developer/endpoint" xsi:type="string">1</item>
+                <item name="bogardo_mailgun/developer/postbin_key" xsi:type="string">1</item>
+            </argument>
+        </arguments>
+    </type>
 </config>
