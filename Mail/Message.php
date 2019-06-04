@@ -95,9 +95,18 @@ class Message implements MailMessageInterface {
     /**
      * @inheritdoc
      */
-    public function setFrom( $fromAddress ) {
-        $this->zendMessage->setFrom( $fromAddress );
+    public function setFromAddress($fromAddress, $fromName = null)
+    {
+        $this->zendMessage->setFrom($fromAddress, $fromName);
+        return $this;
+    }
 
+    /**
+     * @inheritdoc
+     */
+    public function setFrom( $fromAddress )
+    {
+        $this->zendMessage->setFrom( $fromAddress );
         return $this;
     }
 
