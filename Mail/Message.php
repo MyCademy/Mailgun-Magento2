@@ -7,9 +7,9 @@ namespace Bogardo\Mailgun\Mail;
 
 use Zend\Mime\Mime;
 use Zend\Mime\Part;
-use Magento\Framework\Mail\MailMessageInterface;
+use Magento\Framework\Mail\MessageInterface;
 
-class Message implements MailMessageInterface {
+class Message implements MessageInterface {
     /**
      * @var \Zend\Mail\Message
      */
