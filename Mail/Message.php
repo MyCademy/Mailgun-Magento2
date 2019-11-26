@@ -8,10 +8,11 @@ namespace Bogardo\Mailgun\Mail;
 use Zend\Mime\Mime;
 use Zend\Mime\Part;
 use Magento\Framework\Mail\EmailMessageInterface;
+use Magento\Framework\Mail\EmailMessage;
 use Magento\Framework\Mail\MimeMessageInterface;
 use Magento\Framework\Mail\Address;
 
-class Message implements EmailMessageInterface {
+class Message extends EmailMessage {
     /**
      * @var \Zend\Mail\Message
      */
