@@ -163,7 +163,7 @@ class Message extends EmailMessage {
     /**
      * @inheritdoc
      */
-    public function getRawMessage() {
+    public function getRawMessage(): string {
         return $this->zendMessage->toString();
     }
 
