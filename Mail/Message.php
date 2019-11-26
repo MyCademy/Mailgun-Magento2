@@ -7,9 +7,11 @@ namespace Bogardo\Mailgun\Mail;
 
 use Zend\Mime\Mime;
 use Zend\Mime\Part;
-use Magento\Framework\Mail\MessageInterface;
+use Magento\Framework\Mail\EmailMessageInterface;
+use Magento\Framework\Mail\MimeMessageInterface;
+use Magento\Framework\Mail\Address;
 
-class Message implements MessageInterface {
+class Message implements EmailMessageInterface {
     /**
      * @var \Zend\Mail\Message
      */
@@ -21,6 +23,17 @@ class Message implements MessageInterface {
      * @var string
      */
     private $messageType = self::TYPE_TEXT;
+
+    /**
+     * Types of message
+     * @deprecated
+     */
+    const TYPE_TEXT = 'text/plain';
+
+    /**
+     * @deprecated
+     */
+    const TYPE_HTML = 'text/html';
 
     /**
      * Initialize dependencies.
@@ -81,14 +94,14 @@ class Message implements MessageInterface {
     /**
      * @inheritdoc
      */
-    public function getSubject() {
+    public function getSubject() : ?string {
         return $this->zendMessage->getSubject();
     }
 
     /**
      * @inheritdoc
      */
-    public function getBody() {
+    public function getBody() : MimeMessageInterface {
         return $this->zendMessage->getBody();
     }
 
@@ -169,6 +182,97 @@ class Message implements MessageInterface {
         $this->setMessageType( self::TYPE_TEXT );
 
         return $this->setBody( $text );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getEncoding(): string
+    {
+        return $this->message->getEncoding();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getHeaders(): array
+    {
+        return $this->message->getHeaders()->toArray();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getFrom(): ?array
+    {
+        return $this->convertAddressListToAddressArray($this->message->getFrom());
+    }
+
+
+    /**
+     * @inheritDoc
+     */
+    public function getTo(): array
+    {
+        return $this->convertAddressListToAddressArray($this->message->getTo());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCc(): ?array
+    {
+        return $this->convertAddressListToAddressArray($this->message->getCc());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBcc(): ?array
+    {
+        return $this->convertAddressListToAddressArray($this->message->getBcc());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getReplyTo(): ?array
+    {
+        return $this->convertAddressListToAddressArray($this->message->getReplyTo());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBodyText(): string
+    {
+        return $this->message->getBodyText();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getSender(): ?Address
+    {
+        /** @var ZendAddress $zendSender */
+        if (!$zendSender = $this->message->getSender()) {
+            return null;
+        }
+
+        return $this->addressFactory->create(
+            [
+                'email' => $zendSender->getEmail(),
+                'name' => $zendSender->getName()
+            ]
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function toString(): string
+    {
+        return $this->message->toString();
     }
 
     /**

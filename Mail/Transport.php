@@ -5,15 +5,15 @@ namespace Bogardo\Mailgun\Mail;
 use Bogardo\Mailgun\Helper\Config as Config;
 use InvalidArgumentException;
 use Magento\Framework\App\ObjectManager;
-use Magento\Framework\Mail\MessageInterface;
-use Magento\Framework\Mail\Transport as MagentoTransport;
-use Magento\Framework\Mail\TransportInterface;
+use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Framework\Phrase;
+use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Email\Model\Transport as MagentoTransport;
 use Mailgun\Mailgun;
 use Mailgun\Messages\MessageBuilder;
 use Zend_Mail;
 
-class Transport extends MagentoTransport implements TransportInterface
+class Transport extends MagentoTransport
 {
 
     /**
@@ -22,21 +22,24 @@ class Transport extends MagentoTransport implements TransportInterface
     protected $config;
 
     /**
-     * @var \Magento\Framework\Mail\MessageInterface|Zend_Mail
+     * @var \Magento\Framework\Mail\EmailMessageInterface|Zend_Mail
      */
     protected $message;
 
     /**
      * Transport constructor.
      *
-     * @param \Magento\Framework\Mail\MessageInterface $message
+     * @param \Magento\Framework\Mail\EmailMessageInterface $message
      * @param null                                     $parameters
      *
      * @throws InvalidArgumentException
      */
-    public function __construct(MessageInterface $message, $parameters = null)
-    {
-        parent::__construct($message, $parameters);
+    public function __construct(
+        EmailMessageInterface $message,
+        ScopeConfigInterface $scopeConfig,
+        $parameters = null
+    ){
+        parent::__construct($message, $scopeConfig, $parameters);
 
         $this->config = ObjectManager::getInstance()->create(Config::class);
         $this->message = $message;

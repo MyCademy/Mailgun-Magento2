@@ -2,7 +2,7 @@
 
 namespace Bogardo\Mailgun\Mail;
 
-use Magento\Framework\Mail\MessageInterface;
+use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Store\Model\ScopeInterface;
 use Zend\Mail\Address;
 use Zend\Mail\AddressList;
@@ -11,15 +11,15 @@ class MessageParser
 {
 
     /**
-     * @var \Magento\Framework\Message\MessageInterface|\Bogardo\Mailgun\Mail\Message
+     * @var \Magento\Framework\Message\EmailMessageInterface|\Bogardo\Mailgun\Mail\Message
      */
     protected $message;
 
     /**
-     * @param \Magento\Framework\Mail\MessageInterface $message
+     * @param \Magento\Framework\Mail\EmailMessageInterface $message
      */
     public function __construct(
-        MessageInterface $message
+        EmailMessageInterface $message
     ){
         $this->message = $message;
     }
