@@ -22,7 +22,7 @@ class Transport extends MagentoTransport
     protected $config;
 
     /**
-     * @var \Magento\Framework\Mail\EmailMessageInterface|Zend_Mail
+     * @var \Magento\Framework\Mail\EmailMessageInterface
      */
     protected $message;
 
@@ -39,6 +39,7 @@ class Transport extends MagentoTransport
         ScopeConfigInterface $scopeConfig,
         $parameters = null
     ){
+
         parent::__construct($message, $scopeConfig, $parameters);
 
         $this->config = ObjectManager::getInstance()->create(Config::class);
@@ -95,6 +96,7 @@ class Transport extends MagentoTransport
     protected function createMailgunMessage(array $message)
     {
         $builder = new MessageBuilder();
+
         $builder->setFromAddress($message['from']);
         $builder->setSubject($message['subject']);
         foreach ($message['to'] as $to) {

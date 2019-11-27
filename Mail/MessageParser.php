@@ -11,7 +11,7 @@ class MessageParser
 {
 
     /**
-     * @var \Magento\Framework\Message\EmailMessageInterface|\Bogardo\Mailgun\Mail\Message
+     * @var \Magento\Framework\Message\EmailMessage
      */
     protected $message;
 
@@ -35,7 +35,7 @@ class MessageParser
         $html = "";
         $text = "";
 
-        $messageBody = $this->message->getZendMessage()->getBody();
+        $messageBody = $this->message->getBody();
         if ($messageBody && $messageBody instanceof \Zend\Mime\Message) {
             foreach($messageBody->getParts() as $messageSubPart) {
                 if($messageSubPart->getType() == 'text/html') {
@@ -44,26 +44,26 @@ class MessageParser
             }
         }
 
-        $text = $this->message->getZendMessage()->getBodyText();
+        $text = $this->message->getBodyText();
 
         $text = quoted_printable_decode($text);
         $html = quoted_printable_decode($html);
 
-        if(empty($this->getFlatAddressList($this->message->getZendMessage()->getFrom()))) {
+        if(empty($this->getFlatAddressList($this->message->getFrom()))) {
             $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
             $fromAddress = $objectManager->get('Magento\Framework\App\Config\ScopeConfigInterface')->getValue('trans_email/ident_general/email',ScopeInterface::SCOPE_STORE);
         }else{
-            $fromAddress = $this->getFlatAddressList($this->message->getZendMessage()->getFrom())[0];
+            $fromAddress = $this->getFlatAddressList($this->message->getFrom())[0];
         }
 
-        $toAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getTo());
-        $ccAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getCc());
-        $bccAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getBcc());
-        $replyToAddressList = $this->getFlatAddressList($this->message->getZendMessage()->getReplyTo());
+        $toAddressList = $this->getFlatAddressList($this->message->getTo());
+        $ccAddressList = $this->getFlatAddressList($this->message->getCc());
+        $bccAddressList = $this->getFlatAddressList($this->message->getBcc());
+        $replyToAddressList = $this->getFlatAddressList($this->message->getReplyTo());
 
         $attachments = [];
-        if($this->message->getZendMessage()->getBody() instanceof \Zend\Mime\Message) {
-            foreach ($this->message->getZendMessage()->getBody()->getParts() as $part) { /** @var \Zend_Mime_Part $part */
+        if($this->message->getBody() instanceof \Zend\Mime\Message) {
+            foreach ($this->message->getBody()->getParts() as $part) { /** @var \Zend_Mime_Part $part */
                 if ($part->disposition == 'attachment') {
                     $attachments[] = $part;
                 }
@@ -73,7 +73,7 @@ class MessageParser
         return [
             'from' => $fromAddress,
             'reply-to' => $replyToAddressList,
-            'subject' => $this->message->getZendMessage()->getSubject(),
+            'subject' => $this->message->getSubject(),
             'to' => $toAddressList,
             'cc' => $ccAddressList,
             'bcc' => $bccAddressList,
@@ -83,7 +83,7 @@ class MessageParser
         ];
     }
 
-    protected function getFlatAddressList(AddressList $zendAddressList)
+    protected function getFlatAddressList(array $zendAddressList)
     {
         $addressList = [];
 
