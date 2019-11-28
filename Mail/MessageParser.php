@@ -4,6 +4,7 @@ namespace Bogardo\Mailgun\Mail;
 
 use Magento\Framework\Mail\EmailMessageInterface;
 use Magento\Store\Model\ScopeInterface;
+use Magento\Framework\Mail\MimeMessage;
 use Zend\Mail\Address;
 use Zend\Mail\AddressList;
 
@@ -36,7 +37,7 @@ class MessageParser
         $text = "";
 
         $messageBody = $this->message->getBody();
-        if ($messageBody && $messageBody instanceof \Zend\Mime\Message) {
+        if ($messageBody && $messageBody instanceof MimeMessage) {
             foreach($messageBody->getParts() as $messageSubPart) {
                 if($messageSubPart->getType() == 'text/html') {
                     $html .= $messageSubPart->getContent($eol);
@@ -62,8 +63,8 @@ class MessageParser
         $replyToAddressList = $this->getFlatAddressList($this->message->getReplyTo());
 
         $attachments = [];
-        if($this->message->getBody() instanceof \Zend\Mime\Message) {
-            foreach ($this->message->getBody()->getParts() as $part) { /** @var \Zend_Mime_Part $part */
+        if($messageBody && $messageBody instanceof MimeMessage) {
+            foreach ($messageBody->getParts() as $part) { /** @var \Zend_Mime_Part $part */
                 if ($part->disposition == 'attachment') {
                     $attachments[] = $part;
                 }
