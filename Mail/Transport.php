@@ -119,10 +119,10 @@ class Transport extends MagentoTransport
             $builder->setTextBody($message['text']);
         }
 
-        foreach ($message['attachments'] as $attachment) { /** @var \Zend_Mime_Part $attachment */
+        foreach ($message['attachments'] as $attachment) { /** @var \Magento\Framework\Mail\MimePart $attachment */
             $tempPath = tempnam(sys_get_temp_dir(), 'attachment');
             file_put_contents($tempPath, $attachment->getRawContent());
-            $builder->addAttachment($tempPath, $attachment->filename);
+            $builder->addAttachment($tempPath, $attachment->getFileName());
         }
 
         return $builder;
