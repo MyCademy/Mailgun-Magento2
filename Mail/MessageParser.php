@@ -38,7 +38,7 @@ class MessageParser
 
         $messageBody = $this->message->getBody();
         if ($messageBody && $messageBody instanceof MimeMessage) {
-            foreach($messageBody->getParts() as $messageSubPart) {
+            foreach($messageBody->getParts() as $messageSubPart) { /** @var \Magento\Framework\Mail\MimePart $messageSubPart */
                 if($messageSubPart->getType() == 'text/html') {
                     $html .= $messageSubPart->getContent($eol);
                 }
@@ -64,8 +64,8 @@ class MessageParser
 
         $attachments = [];
         if($messageBody && $messageBody instanceof MimeMessage) {
-            foreach ($messageBody->getParts() as $part) { /** @var \Zend_Mime_Part $part */
-                if ($part->disposition == 'attachment') {
+            foreach ($messageBody->getParts() as $part) { /** @var \Magento\Framework\Mail\MimePart $part */
+                if ($part->getDisposition() == 'attachment') {
                     $attachments[] = $part;
                 }
             }
