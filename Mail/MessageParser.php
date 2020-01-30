@@ -36,7 +36,7 @@ class MessageParser
         $html = "";
         $text = "";
 
-        $messageBody = $this->message->getBody();
+        $messageBody = $this->message->getMessageBody();
         if ($messageBody && $messageBody instanceof MimeMessage) {
             foreach($messageBody->getParts() as $messageSubPart) { /** @var \Magento\Framework\Mail\MimePart $messageSubPart */
                 if($messageSubPart->getType() == 'text/html') {
