@@ -5,7 +5,7 @@ namespace Bogardo\Mailgun\Mail;
 
 use Magento\Framework\Mail\Exception\InvalidArgumentException;
 use Zend\Mime\Part as ZendMimePart;
-
+use Magento\Framework\Mail\MimePartInterface;
 /**
  * @inheritDoc
  */
