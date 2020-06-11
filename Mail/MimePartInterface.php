@@ -6,6 +6,9 @@
 
 namespace Bogardo\Mailgun\Mail;
 
+
+use Magento\Framework\Mail\MimeInterface;
+
 /**
  * Interface representing a MIME part.
  */
