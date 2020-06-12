@@ -9,7 +9,13 @@ declare(strict_types=1);
 
 namespace Bogardo\Mailgun\Mail\Template;
 
+use Magento\Framework\Mail\MimeMessageInterfaceFactory;
+use Magento\Framework\Mail\MimePartInterfaceFactory;
 use Magento\Framework\Mail\Template\TransportBuilder as BaseTransportBuilder;
+use Magento\Framework\App\TemplateTypesInterface;
+use Magento\Framework\Phrase;
+use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Mail\MimeInterface;
 
 /**
  * TransportBuilder
@@ -20,6 +26,16 @@ use Magento\Framework\Mail\Template\TransportBuilder as BaseTransportBuilder;
  */
 class TransportBuilder extends BaseTransportBuilder
 {
+    /**
+     * @var MimeMessageInterfaceFactory
+     */
+    protected $mimeMessageInterfaceFactory;
+
+    /**
+     * @var MimePartInterfaceFactory
+     */
+    protected $mimePartInterfaceFactory;
+
     /**
      * Prepare message.
      *
