@@ -11,6 +11,7 @@ namespace Bogardo\Mailgun\Mail\Template;
 
 use Magento\Framework\Mail\AddressConverter;
 use Magento\Framework\Mail\EmailMessageInterfaceFactory;
+use Magento\Framework\Mail\Exception\InvalidArgumentException;
 use Magento\Framework\Mail\MessageInterface;
 use Magento\Framework\Mail\MessageInterfaceFactory;
 use Magento\Framework\Mail\MimeMessageInterfaceFactory;
@@ -216,5 +217,36 @@ class TransportBuilder extends BaseTransportBuilder
         $this->message = $this->emailMessageInterfaceFactory->create($this->messageData);
 
         return $this;
+    }
+
+    /**
+     * Handles possible incoming types of email (string or array)
+     *
+     * @param string $addressType
+     * @param string|array $email
+     * @param string|null $name
+     *
+     * @return void
+     * @throws InvalidArgumentException
+     */
+    private function addAddressByType(string $addressType, $email, ?string $name = null): void
+    {
+        if(!empty($this->addressConverter)) {
+            return;
+        }
+
+        if (is_string($email)) {
+            $this->messageData[$addressType][] = $this->addressConverter->convert($email, $name);
+            return;
+        }
+        $convertedAddressArray = $this->addressConverter->convertMany($email);
+        if (isset($this->messageData[$addressType])) {
+            $this->messageData[$addressType] = array_merge(
+                $this->messageData[$addressType],
+                $convertedAddressArray
+            );
+        } else {
+            $this->messageData[$addressType] = $convertedAddressArray;
+        }
     }
 }
