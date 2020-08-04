@@ -65,8 +65,13 @@ class MessageParser
         $attachments = [];
         if($messageBody && $messageBody instanceof MimeMessage) {
             foreach ($messageBody->getParts() as $part) { /** @var \Magento\Framework\Mail\MimePart $part */
-                if ($part->getDisposition() == 'attachment') {
-                    $attachments[] = $part;
+                try {
+                    if ($part->getDisposition() == 'attachment') {
+                        $attachments[] = $part;
+                    }
+                }catch(\TypeError $e) {
+                    //Type error due to disposition being NULL, while interface expects string. No proper workaround available atm.
+                    //https://community.magento.com/t5/Magento-DevBlog/Backward-incompatible-Changes-in-the-Mail-Library-for-Magento-2/ba-p/144787
                 }
             }
         }
